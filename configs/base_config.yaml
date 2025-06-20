@@ -1,0 +1,207 @@
+# Base Configuration for 3D Center of Mass Extraction Pipeline
+# Date: 2025-06-19
+# Updated with correct BlastoSpim dataset voxel spacing
+
+# Project Information
+project:
+  name: "3D Center of Mass Extractor"
+  version: "1.0.0"
+  description: "Simplified tool for extracting geometric center from 3D volume labels"
+  author: "BlastoSpim Analysis Team"
+
+# Data Paths Configuration
+data:
+  # Base data directory (with symlinks)
+  base_dir: "./data"
+  
+  # Raw data sources
+  raw_data:
+    source: "./data/raw"  # symlink to /mnt/home/awatters/public_www/blastospim/data/source
+    file_pattern: "*.npz"
+    expected_keys: ["img", "labels"]
+  
+  # Labels data
+  labels:
+    # Each raw data file has its own label folder: label_[raw_data-filename]
+    # Inside each folder: label.npz, visualizations, logs, metadata, etc.
+    base_dir: "/mnt/home/dchhantyal/centroid_model_blastospim/data/labels/Blast"
+    folder_pattern: "label_{raw_data_filename}"
+    label_file: "label.npz"
+    visualizations_dir: "visualizations"
+    logs_dir: "logs"
+    metadata_file: "metadata.json"
+
+  # Output directories
+  output:
+    base_dir: "/mnt/home/dchhantyal/centroid_model_blastospim/data/labels/Blast"
+    visualizations: "./visualizations"
+    logs: "/logs"
+    processed: "/processed"
+
+# Centroid Extraction Configuration
+centroid_extraction:
+  # Main extraction parameters
+  method: "center_of_mass"  # Simple geometric center
+  
+  # Volume filtering (optional)
+  filtering:
+    enabled: false  # Simplified pipeline doesn't need filtering
+    min_volume: 10
+    max_volume: 10000
+  
+  # Connectivity for connected components
+  connectivity: 3  # 3D connectivity (1, 2, or 3)
+  
+  # Coordinate system
+  coordinate_order: "zyx"  # Z, Y, X order
+  
+  # Physical voxel sizes (micrometers) - Based on BlastoSpim dataset research paper
+  # From "Dataset acquisition" section:
+  voxel_size:
+    z: 2.0      # Z-axis resolution (between slices) - 2.0 µm
+    y: 0.208    # Y-axis resolution (in-plane) - 0.208 µm  
+    x: 0.208    # X-axis resolution (in-plane) - 0.208 µm
+
+# Visualization Configuration
+visualization:
+  # Enable/disable visualization components
+  enabled: true
+  
+  # Figure settings
+  figure:
+    width: 20
+    height: 12
+    dpi: 300
+    format: "png"
+  
+  # Colormap settings
+  colormaps:
+    volume: "gray"
+    mask: "viridis"
+    overlay_alpha: 0.5
+  
+  # 3D visualization
+  scatter_3d:
+    max_points: 5000  # Subsample for performance
+    point_size: 1
+    point_alpha: 0.1
+    centroid_size: 100
+    centroid_color: "yellow"
+  
+  # Slice views
+  slices:
+    show_middle: true
+    show_min_max: true
+    marker_size: 15
+    marker_color: "white"
+    marker_edge_color: "black"
+  
+  # Bounding box
+  bounding_box:
+    line_width: 2
+    edge_color: "lime"
+    line_style: "--"
+    face_color: "none"
+  
+  # Text and annotations
+  text:
+    font_size: 10
+    font_family: "monospace"
+    stats_box_color: "wheat"
+    method_box_color: "lightblue"
+    box_alpha: 0.8
+
+# Processing Configuration
+processing:
+  # Batch processing
+  batch_size: 1  # Process one file at a time for now
+  
+  # Progress tracking
+  progress_bars:
+    enabled: true
+    leave: false
+    unit: "files"
+  
+  # Memory management
+  memory:
+    max_volume_size: [200, 3000, 3000]  # Maximum volume dimensions
+    subsample_threshold: 5000  # Points to subsample in 3D viz
+  
+  # Parallel processing
+  parallel:
+    enabled: false  # Keep simple for now
+    n_workers: 1
+
+# Logging Configuration
+logging:
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR, CRITICAL
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  
+  # Log files
+  files:
+    main: "./output/logs/main.log"
+    errors: "./output/logs/errors.log"
+  
+  # Console logging
+  console:
+    enabled: true
+    level: "INFO"
+
+# BlastoSpim Dataset Specific Configuration
+blastospim:
+  # Dataset specifications from research paper
+  voxel_spacing:
+    x_um: 0.208  # X-axis resolution (in-plane)
+    y_um: 0.208  # Y-axis resolution (in-plane) 
+    z_um: 2.0    # Z-axis resolution (between slices)
+  
+  # Typical dataset characteristics
+  expected_volume_range:
+    z: [50, 150]      # Typical Z slices
+    y: [1000, 3000]   # Typical Y dimension
+    x: [1000, 3000]   # Typical X dimension
+  
+  # Object characteristics
+  nuclei:
+    typical_count_range: [50, 500]
+    typical_size_um: [5, 20]  # Typical nuclei diameter in micrometers
+
+# Analysis Configuration
+analysis:
+  # Statistics to compute
+  statistics:
+    - "centroid"
+    - "bounding_box"
+    - "total_volume"
+    - "num_objects"
+    - "density"
+    - "physical_coordinates"
+    - "physical_dimensions"
+  
+  # Validation checks
+  validation:
+    check_empty_masks: true
+    check_volume_shape: true
+    min_objects: 1
+    max_objects: 10000
+  
+  # Export formats
+  export:
+    formats: ["npz", "json"]
+    include_metadata: true
+    compression: true
+
+# Quality Control
+quality_control:
+  # Automatic checks
+  checks:
+    volume_shape_consistency: true
+    mask_label_validity: true
+    centroid_bounds_check: true
+    voxel_spacing_validation: true
+  
+  # Thresholds
+  thresholds:
+    min_density: 0.001  # Minimum nuclei density (0.1%)
+    max_density: 0.5    # Maximum nuclei density (50%)
+    centroid_bounds_margin: 0.1  # 10% margin from volume edges

@@ -1,0 +1,26 @@
+# Model Configuration
+model:
+  name: "CNN3D"
+  input_shape: [128, 128, 128, 1]
+  num_classes: 1
+  architecture:
+    filters: [32, 64, 128]
+    kernel_size: 3
+    dropout_rate: 0.3
+    dense_units: 512
+    activation: "relu"
+    output_activation: "sigmoid"
+
+# Training Configuration
+training:
+  epochs: 10
+  batch_size: 4  # Small batch size for 3D data due to memory constraints
+  learning_rate: 0.001
+  optimizer: "adam"
+  loss: "binary_crossentropy"
+  metrics: ["accuracy", "precision", "recall"]
+  
+  # Data splits
+  validation_split: 0.2
+  test_split: 0.1
+  

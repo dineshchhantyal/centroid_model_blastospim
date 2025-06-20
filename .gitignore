@@ -1,0 +1,215 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+.conda/
+conda-meta/
+
+# Large dataset directories - ignore all data directory contents (files are 1-2GB each)
+data/
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+
+# IPython
+profile_default/
+ipython_config.py
+
+# Environment variables
+.env
+.venv
+.env.local
+.env.*.local
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Machine Learning and Data Science
+# Large data files
+*.npy
+*.npz
+*.hdf5
+*.h5
+*.pkl
+*.pickle
+*.joblib
+
+# Model files (comment out if you want to track specific models)
+models/*.h5
+models/*.pb
+models/*_savedmodel/
+models/checkpoints/
+*.ckpt
+*.ckpt.*
+*.pth
+*.pt
+
+# Tensorboard logs
+logs/*/
+tensorboard_logs/
+runs/
+
+# Training outputs
+outputs/
+experiments/
+mlruns/
+wandb/
+
+# System and temporary files
+*.log
+*.tmp
+*.temp
+temp/
+tmp/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# Compressed files (unless specifically needed)
+*.zip
+*.tar.gz
+*.tgz
+*.rar
+*.7z
+
+# Documentation build
+docs/_build/
+docs/build/
+site/
+
+# Testing
+.coverage
+.pytest_cache/
+.tox/
+htmlcov/
+.nox/
+coverage.xml
+*.cover
+.hypothesis/
+
+# MyPy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# Pytype static type analyzer
+.pytype/
+
+# Celery beat schedule file
+celerybeat-schedule
+
+# SageMath parsed files
+*.sage.py
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# Project-specific ignores for 3D CNN Centroid Model
+
+# Large volumetric data files (typically 1-2GB each)
+*.tif
+*.tiff
+*.zarr
+*.mat
+
+# Training logs and artifacts
+*_training_log.csv
+*_history.csv
+events.out.tfevents.*
+*.tfevents.*
+
+# 3D visualization outputs (keep some samples, ignore bulk generations)
+visualizations/3d_volumes/*.png
+visualizations/training_*.png
+
+# Keep small sample outputs but ignore large generated files
+!samples/blast_geometric_center_analysis.png
+!samples/comprehensive_analysis.png
+!samples/enhanced_bounding_box_demo.png
+
+# Keep configuration files but ignore local overrides
+!configs/*.yaml
+!configs/*.yml
+configs/local_*.yaml
+configs/personal_*.yaml
+
+# Keep results summaries but ignore large model files
+!models/*_results.json
+models/*.h5
+models/checkpoints/*.h5
+
+# GPU-specific files
+*.cu
+*.cuh
+
+# CUDA cache
+.nv/
+
+# Large checkpoint directories
+checkpoints/epoch_*/
+checkpoints/step_*/
+
+# Temporary training files
+training_tmp/
+tmp_*
+
+# Ignore personal notes and scratch files
+notes.txt
+scratch.py
+test_*.py
+debug_*.py
+todo.md
+personal_notes.md
