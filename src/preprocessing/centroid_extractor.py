@@ -1,8 +1,8 @@
 """
-Simplified 3D Centroid Extractor with Comprehensive Visualization
+3D Centroid Extractor with Visualization
 
-This module provides a clean, focused class for extracting the center of mass
-from 3D volume labels with comprehensive visualization capabilities.
+This module provides a class for extracting the center of mass
+from 3D volume labels with visualization capabilities.
 """
 
 import numpy as np
@@ -16,13 +16,7 @@ import matplotlib.patches as patches
 
 class CentroidExtractor:
     """
-    Simplified class for extracting center of mass from 3D volume labels.
-
-    Main functionality:
-    1. Extract global centroid (center of mass) from 3D masks
-    2. Calculate bounding box of all objects
-    3. Comprehensive visualization with multiple views
-    4. Simple, clean API
+    Class for extracting center of mass from 3D volume labels.
     """
 
     def __init__(self, logger: Optional[logging.Logger] = None):
@@ -36,8 +30,6 @@ class CentroidExtractor:
     def extract_center_of_mass(self, mask: np.ndarray) -> Dict[str, Any]:
         """
         Extract center of mass (geometric center) from 3D mask.
-
-        This is the main function - simple and focused.
 
         Args:
             mask: 3D labeled mask array
@@ -97,7 +89,7 @@ class CentroidExtractor:
         voxel_size: Tuple[float, float, float] = (1.0, 1.0, 1.0),
     ) -> None:
         """
-        Create comprehensive visualization like the example image.
+        Create comprehensive visualization including bounding box and centroid.
 
         Args:
             volume: 3D intensity volume

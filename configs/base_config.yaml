@@ -122,11 +122,6 @@ processing:
     leave: false
     unit: "files"
   
-  # Memory management
-  memory:
-    max_volume_size: [200, 3000, 3000]  # Maximum volume dimensions
-    subsample_threshold: 5000  # Points to subsample in 3D viz
-  
   # Parallel processing
   parallel:
     enabled: false  # Keep simple for now
@@ -165,43 +160,3 @@ blastospim:
   nuclei:
     typical_count_range: [50, 500]
     typical_size_um: [5, 20]  # Typical nuclei diameter in micrometers
-
-# Analysis Configuration
-analysis:
-  # Statistics to compute
-  statistics:
-    - "centroid"
-    - "bounding_box"
-    - "total_volume"
-    - "num_objects"
-    - "density"
-    - "physical_coordinates"
-    - "physical_dimensions"
-  
-  # Validation checks
-  validation:
-    check_empty_masks: true
-    check_volume_shape: true
-    min_objects: 1
-    max_objects: 10000
-  
-  # Export formats
-  export:
-    formats: ["npz", "json"]
-    include_metadata: true
-    compression: true
-
-# Quality Control
-quality_control:
-  # Automatic checks
-  checks:
-    volume_shape_consistency: true
-    mask_label_validity: true
-    centroid_bounds_check: true
-    voxel_spacing_validation: true
-  
-  # Thresholds
-  thresholds:
-    min_density: 0.001  # Minimum nuclei density (0.1%)
-    max_density: 0.5    # Maximum nuclei density (50%)
-    centroid_bounds_margin: 0.1  # 10% margin from volume edges

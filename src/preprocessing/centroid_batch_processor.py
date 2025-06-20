@@ -5,10 +5,8 @@ This module provides an OOP-based batch processor for extracting centroids
 from 3D volume data and organizing the results in a structured format.
 """
 
-import os
-import shutil
 from pathlib import Path
-from typing import List, Dict, Any, Optional, Union
+from typing import Dict, Any, Optional, Union
 import numpy as np
 import logging
 from datetime import datetime
@@ -16,10 +14,9 @@ import json
 from tqdm import tqdm
 from src.utils.config import ConfigManager
 
-# Import our custom centroid extractor
 import sys
 
-sys.path.append("/mnt/home/dchhantyal/centroid_model_blastospim")
+project_root = Path("/mnt/home/dchhantyal/centroid_model_blastospim")
 from src.preprocessing.centroid_extractor import CentroidExtractor
 
 
@@ -51,7 +48,9 @@ class CentroidBatchProcessor:
         """
         # Load configuration first
         if config_path is None:
-            config_path = "configs/base_config.yaml"
+            # Resolve config path relative to this script's directory
+            config_path = project_root / "configs" / "base_config.yaml"
+
         self.config_manager = ConfigManager(config_path)
 
         # Set output directory from config if not provided
@@ -234,13 +233,6 @@ class CentroidBatchProcessor:
                     voxel_size=self.blastospim_voxel_spacing,  # (z=2.0µm, y/x=0.208µm)
                 )
 
-                # Note: Centroid overlay is included in comprehensive visualization
-                # Uncomment below if you need a separate simple overlay:
-                # self._create_centroid_overlay(
-                #     volume, mask, centroid_data,
-                #     output_paths['visualization_dir'] / 'centroid_overlay.png'
-                # )
-
             # Save detailed analysis
             analysis_data = self._create_detailed_analysis(
                 volume, mask, centroid_data, filename
@@ -366,61 +358,6 @@ class CentroidBatchProcessor:
             "results": results,
             "output_dir": self.output_base_dir,
         }
-
-    def _create_centroid_overlay(self, volume, mask, centroid_data, save_path):
-        """Create a simple centroid overlay visualization using config settings."""
-        import matplotlib.pyplot as plt
-
-        centroid = centroid_data["centroid"]
-        z_slice = int(centroid[0])
-
-        # Get visualization settings from config
-        volume_cmap = self.config_manager.get("visualization.colormaps.volume", "gray")
-        mask_cmap = self.config_manager.get("visualization.colormaps.mask", "viridis")
-        overlay_alpha = self.config_manager.get(
-            "visualization.colormaps.overlay_alpha", 0.3
-        )
-        marker_size = self.config_manager.get("visualization.slices.marker_size", 15)
-        marker_color = self.config_manager.get(
-            "visualization.slices.marker_color", "white"
-        )
-
-        fig, axes = plt.subplots(1, 3, figsize=(15, 5))
-
-        # Z slice
-        axes[0].imshow(volume[z_slice], cmap=volume_cmap)
-        axes[0].imshow(mask[z_slice], alpha=overlay_alpha, cmap=mask_cmap)
-        axes[0].plot(
-            centroid[2], centroid[1], f"{marker_color[0]}*", markersize=marker_size
-        )
-        axes[0].set_title(f"Z slice {z_slice}")
-
-        # Y slice
-        y_slice = int(centroid[1])
-        axes[1].imshow(volume[:, y_slice], cmap=volume_cmap)
-        axes[1].imshow(mask[:, y_slice], alpha=overlay_alpha, cmap=mask_cmap)
-        axes[1].plot(
-            centroid[2], centroid[0], f"{marker_color[0]}*", markersize=marker_size
-        )
-        axes[1].set_title(f"Y slice {y_slice}")
-
-        # X slice
-        x_slice = int(centroid[2])
-        axes[2].imshow(volume[:, :, x_slice], cmap=volume_cmap)
-        axes[2].imshow(mask[:, :, x_slice], alpha=overlay_alpha, cmap=mask_cmap)
-        axes[2].plot(
-            centroid[1], centroid[0], f"{marker_color[0]}*", markersize=marker_size
-        )
-        axes[2].set_title(f"X slice {x_slice}")
-
-        plt.tight_layout()
-
-        # Get figure settings from config
-        dpi = self.config_manager.get("visualization.figure.dpi", 150)
-        fig_format = self.config_manager.get("visualization.figure.format", "png")
-
-        plt.savefig(save_path, dpi=dpi, bbox_inches="tight", format=fig_format)
-        plt.close()
 
     def _create_detailed_analysis(self, volume, mask, centroid_data, filename):
         """Create detailed analysis data."""
@@ -548,7 +485,7 @@ if __name__ == "__main__":
     print("=== Single File Processing Example ===")
 
     # Initialize processor
-    processor = SingleFileProcessor(output_dir="data/labels")
+    processor = SingleFileProcessor(output_dir=project_root / "test-data/labels")
 
     # Process the specific file
     input_file = "/mnt/home/dchhantyal/ceph/datasets/Blast_001.npz"
@@ -565,31 +502,3 @@ if __name__ == "__main__":
             print(f"❌ Failed to process: {result['error']}")
     else:
         print(f"❌ File not found: {input_file}")
-
-    print("\n=== Batch Processing Example ===")
-
-    # Example 2: Process directory (if you have more files)
-    batch_processor = CentroidBatchProcessor(output_dir="data/labels")
-
-    # Process all files in the datasets directory
-    input_directory = "/mnt/home/dchhantyal/ceph/datasets"
-
-    if Path(input_directory).exists():
-        batch_result = batch_processor.process_directory(
-            input_dir=input_directory, max_files=5  # Limit to 5 files for demonstration
-        )
-
-        print(f"📊 Batch processing summary:")
-        print(f"   Total files: {batch_result['summary']['batch_info']['total_files']}")
-        print(
-            f"   Successful: {batch_result['summary']['batch_info']['successful_files']}"
-        )
-        print(f"   Failed: {batch_result['summary']['batch_info']['failed_files']}")
-        print(
-            f"   Success rate: {batch_result['summary']['batch_info']['success_rate']:.1%}"
-        )
-        print(
-            f"   Duration: {batch_result['summary']['batch_info']['processing_duration']}"
-        )
-    else:
-        print(f"❌ Directory not found: {input_directory}")
